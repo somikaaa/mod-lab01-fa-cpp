@@ -1,5 +1,5 @@
 #include <iostream>
-#include "lab1.h"
+#include "fun.h"
 
 int main() {
     const char* text = "Hello World! ";
