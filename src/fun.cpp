@@ -2,7 +2,7 @@
 #include <cctype>
 #include <cstring>
 #include <cmath>
-#include "lab1.h" 
+#include "fun.h" 
 
 
 //ф-я подсчета слов без цифр
