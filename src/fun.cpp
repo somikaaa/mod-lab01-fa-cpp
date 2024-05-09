@@ -5,143 +5,90 @@
 #include "fun.h" 
 
 
-//ф-я подсчета слов без цифр
-unsigned int faStr1(const char* str){
-	unsigned int counter = 0;
-
-	bool inWord = false;//в слове
-	bool hasDigit = false;//является цифрой
-
-	for (int i = 0; str[i] != '\0'; i++) {
-		//проверка, является ли текущий символ пробелом
-		if (std::isspace(str[i])) {
-			//если находимся внутри слова и не обнаружили цифры, увеличиваем counter
-			if (inWord && !hasDigit)
-			{
-				counter++;
-			}
-			inWord = false;
-			hasDigit = false;
-		} else {
-			if (std::isdigit(str[i])) {
-				hasDigit = true;
-			}
-			inWord = true;
-		}
-		
-	}
-	// Проверяем последнее слово, если оно не содержит цифр
-	if (inWord && !hasDigit) {
-		counter++;
-	}
-
-	return counter;
+bool isLatinLetter(char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-/*int main() {
-    const char* input = "Пример строки с 123 цифрами и словами без цифр";
-    unsigned int count = faStr1(input);
-    std::cout << "Количество слов без цифр: " << count << std::endl;
+// Функция для определения, является ли символ цифрой
+bool isDigit(char c) {
+    return c >= '0' && c <= '9';
+}
 
-    return 0;
-}*/
+// Функция для подсчета слов, не содержащих цифр
+unsigned int faStr1(const char* str) {
+    unsigned int count = 0;
+    bool inWord = false;
 
+    while (*str) {
+        if (isLatinLetter(*str)) {
+            if (!inWord) {
+                inWord = true;
+            }
+        }
+        else if (isDigit(*str)) {
+            inWord = false;
+        }
+        str++;
+    }
 
+    if (inWord) {
+        count++;
+    }
 
-// Функция для подсчета слов, начинающихся на заглавную латинскую букву и содержащих только латинские строчные буквы
+    return count;
+}
+
+// Функция для подсчета слов, начинающихся на заглавную латинскую букву и содержащих только строчные буквы
 unsigned int faStr2(const char* str) {
-	unsigned int count = 0;
-	bool inWord = false;
-	bool startsWithCapital = false;
-	bool hasNonLowercase = false;
+    unsigned int count = 0;
+    bool inWord = false;
+    bool isCapital = false;
 
-	for (int i = 0; str[i] != '\0'; ++i) {
-		// Проверяем, является ли текущий символ пробелом
-		if (std::isspace(str[i])) {
-			// Если мы находимся внутри слова и оно начинается с заглавной буквы и содержит только строчные буквы
-			if (inWord && startsWithCapital && !hasNonLowercase) {
-				count++;
-			}
-			inWord = false;
-			startsWithCapital = false;
-			hasNonLowercase = false;
-		}
-		else {
-			// Проверяем, является ли текущий символ заглавной буквой
-			if (std::isupper(str[i])) {
-				startsWithCapital = true;
-			}
-			else if (std::islower(str[i])) {
-				// Проверяем, является ли текущий символ строчной буквой
-				// Если нет, устанавливаем флаг на наличие не строчных букв
-				if (!startsWithCapital) {
-					hasNonLowercase = true;
-				}
-			}
-			else {
-				// Если символ не буква, сбрасываем флаги
-				startsWithCapital = false;
-				hasNonLowercase = false;
-			}
-			inWord = true;
-		}
-	}
+    while (*str) {
+        if (isLatinLetter(*str)) {
+            if (!inWord) {
+                inWord = true;
+                isCapital = (*str >= 'A' && *str <= 'Z');
+            }
+            else if (!isCapital && isLatinLetter(*str)) {
+                isCapital = false;
+            }
+        }
+        else {
+            inWord = false;
+        }
+        str++;
+    }
 
-	// Проверяем последнее слово, если оно соответствует условиям
-	if (inWord && startsWithCapital && !hasNonLowercase) {
-		count++;
-	}
+    if (inWord && isCapital) {
+        count++;
+    }
 
-	return count;
+    return count;
 }
-/*int main() {
-    const char* input = "Пример строки с Word и word, но не с Word1 или word1";
-    unsigned int count = faStr2(input);
-    std::cout << "Количество слов, соответствующих условиям: " << count << std::endl;
 
-    return 0;
-}*/
-
-
-
-// Функция для подсчета средней длины слова в строке
+// Функция для подсчета средней длины слова в строке, округляя до ближайшего целого числа
 unsigned int faStr3(const char* str) {
-	unsigned int totalLength = 0;
-	unsigned int wordCount = 0;
-	bool inWord = false;
+    unsigned int totalLength = 0;
+    unsigned int wordCount = 0;
 
-	for (int i = 0; str[i] != '\0'; ++i) {
-		// Проверяем, является ли текущий символ пробелом
-		if (std::isspace(str[i])) {
-			inWord = false;
-		}
-		else {
-			if (!inWord) {
-				inWord = true;
-				wordCount++;
-			}
-			totalLength++;
-		}
-	}
+    while (*str) {
+        if (isLatinLetter(*str)) {
+            if (!wordCount) {
+                wordCount++;
+            }
+            totalLength++;
+        }
+        else {
+            wordCount = 0;
+        }
+        str++;
+    }
 
-	// Проверяем последнее слово, если оно не закончилось пробелом
-	if (inWord) {
-		wordCount++;
-	}
-
-	// Если слов нет, возвращаем 0
-	if (wordCount == 0) {
-		return 0;
-	}
-
-	// Вычисляем среднюю длину слова, округляя до целого значения
-	unsigned int averageLength = static_cast<unsigned int>(totalLength / wordCount);
-	return averageLength;
+    if (wordCount) {
+        return totalLength / wordCount;
+    }
+    else {
+        return 0;
+    }
 }
- /*int main() {
-    const char* input = "Пример строки с разными длинами слов";
-    unsigned int averageLength = faStr3(input);
-    std::cout << "Средняя длина слова: " << averageLength << std::endl;
-
-    return 0;
-}*/
