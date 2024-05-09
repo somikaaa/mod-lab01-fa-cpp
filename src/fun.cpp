@@ -1,94 +1,78 @@
-#include <iostream>
+#include "fun.h"
+#include <sstream>
 #include <cctype>
-#include <cstring>
-#include <cmath>
-#include "fun.h" 
+#include <string>
 
-
-bool isLatinLetter(char c) {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
-// Функция для определения, является ли символ цифрой
-bool isDigit(char c) {
-    return c >= '0' && c <= '9';
-}
-
-// Функция для подсчета слов, не содержащих цифр
 unsigned int faStr1(const char* str) {
-    unsigned int count = 0;
-    bool inWord = false;
+    unsigned int wordCount = 0;
+    bool isWord = false;
 
-    while (*str) {
-        if (isLatinLetter(*str)) {
-            if (!inWord) {
-                inWord = true;
+    // Перемещаемся к началу строки, чтобы начать обход с первого символа
+    const char* currentChar = str;
+
+    while (*currentChar) {
+        // Если текущий символ не является цифрой и не пробелом, начинаем новое слово
+        if (!std::isdigit(*currentChar) && !std::isspace(*currentChar)) {
+            isWord = true;
+        }
+        // Если текущий символ является пробелом и мы находимся внутри слова, увеличиваем счетчик слов
+        else if (std::isspace(*currentChar) && isWord) {
+            wordCount++;
+            isWord = false;
+        }
+        // Если текущий символ является цифрой, сбрасываем флаг isWord и пропускаем все цифры до следующего пробела или конца строки
+        else if (std::isdigit(*currentChar)) {
+            isWord = false;
+            while (*currentChar && !std::isspace(*currentChar)) {
+                currentChar++;
             }
         }
-        else if (isDigit(*str)) {
-            inWord = false;
-        }
-        str++;
+
+        currentChar++;
     }
 
-    if (inWord) {
-        count++;
+    // Увеличиваем счетчик слов, если последнее слово не было учтено
+    if (isWord) {
+        wordCount++;
     }
 
-    return count;
+    return wordCount;
 }
 
-// Функция для подсчета слов, начинающихся на заглавную латинскую букву и содержащих только строчные буквы
 unsigned int faStr2(const char* str) {
     unsigned int count = 0;
-    bool inWord = false;
-    bool isCapital = false;
+    std::istringstream iss(str);
+    std::string word;
 
-    while (*str) {
-        if (isLatinLetter(*str)) {
-            if (!inWord) {
-                inWord = true;
-                isCapital = (*str >= 'A' && *str <= 'Z');
+    while (iss >> word) {
+        if (!word.empty() && isupper(word[0])) {
+            bool valid = true;
+            for (size_t i = 1; i < word.length(); i++) {
+                if (!islower(word[i]) && !isspace(word[i])) {
+                    valid = false;
+                    break;
+                }
             }
-            else if (!isCapital && isLatinLetter(*str)) {
-                isCapital = false;
+
+            if (valid) {
+                count++;
             }
         }
-        else {
-            inWord = false;
-        }
-        str++;
-    }
-
-    if (inWord && isCapital) {
-        count++;
     }
 
     return count;
 }
 
-// Функция для подсчета средней длины слова в строке, округляя до ближайшего целого числа
 unsigned int faStr3(const char* str) {
-    unsigned int totalLength = 0;
     unsigned int wordCount = 0;
+    unsigned int totalLength = 0;
+    std::istringstream iss(str);
+    std::string word;
 
-    while (*str) {
-        if (isLatinLetter(*str)) {
-            if (!wordCount) {
-                wordCount++;
-            }
-            totalLength++;
-        }
-        else {
-            wordCount = 0;
-        }
-        str++;
+    while (iss >> word) {
+        wordCount++;
+        totalLength += word.length();
     }
 
-    if (wordCount) {
-        return totalLength / wordCount;
-    }
-    else {
-        return 0;
-    }
+    return wordCount == 0 ? 0 : totalLength / wordCount;
 }
