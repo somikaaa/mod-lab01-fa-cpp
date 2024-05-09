@@ -21,7 +21,6 @@ unsigned int faStr1(const char* str) {
         } else if (std::isspace(*currentChar) && isWord) {
             wordCount++;
             isWord = false;
-        
         // Если текущий символ является цифрой, сбрасываем флаг
         //isWord и пропускаем все цифры до следующего пробела или конца строки
         } else if (std::isdigit(*currentChar)) {
