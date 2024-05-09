@@ -12,16 +12,19 @@ unsigned int faStr1(const char* str) {
     const char* currentChar = str;
 
     while (*currentChar) {
-        // Если текущий символ не является цифрой и не пробелом, начинаем новое слово
+        // Если текущий символ не является 
+        //цифрой и не пробелом, начинаем новое слово
         if (!std::isdigit(*currentChar) && !std::isspace(*currentChar)) {
             isWord = true;
         }
-        // Если текущий символ является пробелом и мы находимся внутри слова, увеличиваем счетчик слов
+        // Если текущий символ является пробелом
+        //и мы находимся внутри слова, увеличиваем счетчик слов
         else if (std::isspace(*currentChar) && isWord) {
             wordCount++;
             isWord = false;
         }
-        // Если текущий символ является цифрой, сбрасываем флаг isWord и пропускаем все цифры до следующего пробела или конца строки
+        // Если текущий символ является цифрой, сбрасываем флаг 
+        //isWord и пропускаем все цифры до следующего пробела или конца строки
         else if (std::isdigit(*currentChar)) {
             isWord = false;
             while (*currentChar && !std::isspace(*currentChar)) {
