@@ -1,3 +1,4 @@
+// Copyright 2022 UNN UNN-IASR
 #include "fun.h"
 #include <sstream>
 #include <cctype>
